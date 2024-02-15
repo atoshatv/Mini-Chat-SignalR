@@ -1,0 +1,88 @@
+﻿@page "/"
+
+<div class="chat-container">
+    @if (user == null)
+    {
+        <div class="input-container">
+            <input @bind="name" />
+            <button @onclick="Connect">OK</button>
+        </div>
+        
+    }
+    else
+    {
+        @foreach (var message in messages)
+        {
+            <div class="message-container">
+                @if (message.User == user)
+                {
+                    <p class="user-message"><strong>@message.User:</strong> @message.Text</p>
+                }
+                else
+                {
+                    <p class="other-message"><strong>@message.User:</strong> @message.Text</p>
+                }
+            </div>
+        }
+        <div class="input-container">
+            <input @bind="message" />
+            <button @onclick="SendMessage">Send</button>
+        </div>
+    }
+</div>
+
+
+
+
+
+
+@code{
+    List<Message> messages = new List<Message>();
+
+    HubConnection connection;
+    string name;
+    string message;
+
+    string? user = null;
+
+    async Task SendMessage()
+    {
+        var msg = new Message(name, message);
+        await connection.InvokeAsync("NewMessage", msg);
+
+    }
+   
+    public  async Task Connect()
+    {
+
+        connection = new HubConnectionBuilder()
+           .WithUrl("https://localhost:7062/chat")
+           .Build();
+
+        connection.On<Message>("newMessage", (message) =>
+        {
+            messages.Add(message);
+            InvokeAsync(StateHasChanged);
+
+        });
+        connection.On<string>("user", (user) =>
+        {
+            messages.Add(new Message(user, "ENTER"));
+            InvokeAsync(StateHasChanged);
+
+        });
+        connection.On<List<Message>>("previous", (mess) =>
+        {
+            messages = mess;
+            InvokeAsync(StateHasChanged);
+
+        });
+        user = name;
+        await connection.StartAsync();
+        await connection.SendAsync("NewUser", name);
+
+
+
+    }
+
+}
