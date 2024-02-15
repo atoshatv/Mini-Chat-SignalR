@@ -14,7 +14,7 @@
     {
         @foreach (var message in messages)
         {
-            <div class="message-container">
+            <div >
                 @if (message.User == user)
                 {
                     <p class="user-message"><strong>@message.User:</strong> @message.Text</p>
