@@ -1,6 +1,7 @@
 ﻿@page "/"
 
 <div class="chat-container">
+    <h4>Chat</h4>
     @if (user == null)
     {
         <div class="input-container">
@@ -44,12 +45,12 @@
     string message;
 
     string? user = null;
-
+    
     async Task SendMessage()
     {
         var msg = new Message(name, message);
         await connection.InvokeAsync("NewMessage", msg);
-
+        message = "";
     }
    
     public  async Task Connect()
