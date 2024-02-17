@@ -11,16 +11,21 @@
 .user-message {
     background-color: #4caf50;
     color: #fff;
-    padding: 10px;
-    border-radius: 5px;
+    
 }
 
 .other-message {
     background-color: #e0e0e0;
     color: #333;
+    
+}
+.user-message, .other-message {
+    word-wrap: break-word;
     padding: 10px;
     border-radius: 5px;
+    max-width: 100%;
 }
+
 
 .input-container {
     margin-top: 10px;

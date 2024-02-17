@@ -7,6 +7,12 @@ namespace chatik.Hubs
     {
 
         static List<Message> messages = new List<Message>();
+        
+        
+       
+
+        
+
         public async Task NewMessage(Message message)
         {
            await Clients.All.SendAsync("newMessage", message);
@@ -17,6 +23,8 @@ namespace chatik.Hubs
         {
             await Clients.Caller.SendAsync("previous", messages);
             await Clients.All.SendAsync("user", user);
-        } 
+          
+        }
+        
     }
 }

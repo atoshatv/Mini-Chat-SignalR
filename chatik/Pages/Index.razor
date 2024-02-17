@@ -2,10 +2,12 @@
 
 <div class="chat-container">
     <h4>Chat</h4>
+   
+    
     @if (user == null)
     {
         <div class="input-container">
-            <input @bind="name" />
+            <input placeholder="Ваше имя" @bind="name" />
             <button @onclick="Connect">OK</button>
         </div>
         
@@ -46,12 +48,14 @@
 
     string? user = null;
     
+    
     async Task SendMessage()
     {
         var msg = new Message(name, message);
         await connection.InvokeAsync("NewMessage", msg);
         message = "";
     }
+    
    
     public  async Task Connect()
     {
@@ -60,24 +64,33 @@
            .WithUrl("https://localhost:7062/chat")
            .Build();
 
+
+
+        
         connection.On<Message>("newMessage", (message) =>
         {
             messages.Add(message);
             InvokeAsync(StateHasChanged);
 
         });
+
         connection.On<string>("user", (user) =>
         {
             messages.Add(new Message(user, "ENTER"));
+            
             InvokeAsync(StateHasChanged);
+            
 
         });
         connection.On<List<Message>>("previous", (mess) =>
         {
             messages = mess;
+            
             InvokeAsync(StateHasChanged);
 
         });
+       
+       
         user = name;
         await connection.StartAsync();
         await connection.SendAsync("NewUser", name);
